@@ -44,5 +44,5 @@ yarn-error.log
 Thumbs.db
 
 # Docker files
-docker-compose.yml
-Dockerfile
+# docker-compose.yml
+# Dockerfile
