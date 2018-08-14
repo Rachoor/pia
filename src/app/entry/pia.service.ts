@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
-import { AppDataService } from 'app/services/app-data.service';
+
 import { Pia } from './pia.model';
 import { Evaluation } from 'app/entry/entry-content/evaluations/evaluation.model';
 import { Answer } from 'app/entry/entry-content/questions/answer.model';
@@ -10,6 +10,7 @@ import { Measure } from 'app/entry/entry-content/measures/measure.model';
 import { Comment } from 'app/entry/entry-content/comments/comment.model';
 import { Attachment } from 'app/entry/attachments/attachment.model';
 
+import { AppDataService } from 'app/services/app-data.service';
 import { ModalsService } from 'app/modals/modals.service';
 import { ActionPlanService } from 'app/entry/entry-content/action-plan//action-plan.service';
 
@@ -196,7 +197,7 @@ export class PiaService {
 
     /* Set this PIA as the example PIA if needed, else default value affected on creation */
     if (is_example) {
-      pia.is_example = true;
+      pia.is_example = 1;
     }
 
     if (is_duplicate) {

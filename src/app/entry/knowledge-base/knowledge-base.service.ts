@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
+import { map} from "rxjs/operators";
+
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
-import 'rxjs/add/operator/map'
 
 @Injectable()
 export class KnowledgeBaseService {

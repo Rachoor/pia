@@ -9,6 +9,8 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { registerLocaleData } from '@angular/common';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { Angular2CsvModule } from 'angular2-csv';
+import { CsvModule } from "./summary/csv.module";
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 import { AppDataService } from 'app/services/app-data.service';
@@ -58,13 +60,14 @@ import { AboutComponent } from 'app/about/about.component';
 import { AppRoutingModule } from 'app/app-routing.module';
 import { CardsRoutingModule } from 'app/cards/cards-routing.module';
 
-import localeEN from '@angular/common/locales/en';
-import localeFR from '@angular/common/locales/fr';
 import localeCS from '@angular/common/locales/cs';
 import localeDE from '@angular/common/locales/de';
 import localeEL from '@angular/common/locales/el';
+import localeEN from '@angular/common/locales/en';
 import localeES from '@angular/common/locales/es';
 import localeFI from '@angular/common/locales/fi';
+import localeFR from '@angular/common/locales/fr';
+import localeHU from '@angular/common/locales/hu';
 import localeIT from '@angular/common/locales/it';
 import localeNL from '@angular/common/locales/nl';
 import localeNN from '@angular/common/locales/nn';
@@ -72,13 +75,14 @@ import localePL from '@angular/common/locales/pl';
 import localePT from '@angular/common/locales/pt';
 import localeRO from '@angular/common/locales/ro';
 
-registerLocaleData(localeEN);
-registerLocaleData(localeFR);
 registerLocaleData(localeCS);
 registerLocaleData(localeDE);
 registerLocaleData(localeEL);
+registerLocaleData(localeEN);
 registerLocaleData(localeES);
 registerLocaleData(localeFI);
+registerLocaleData(localeFR);
+registerLocaleData(localeHU);
 registerLocaleData(localeIT);
 registerLocaleData(localeNL);
 registerLocaleData(localeNN);
@@ -161,6 +165,8 @@ export function createTranslateLoader(http: HttpClient) {
     ReactiveFormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    Angular2CsvModule,
+    CsvModule,
     TagInputModule,
     TranslateModule.forRoot({
       loader: {

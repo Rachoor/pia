@@ -1,10 +1,11 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, Params } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
-import {element} from 'protractor';
+import { Component, ElementRef, OnInit, AfterContentChecked } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+// import { element } from 'protractor';
 import * as html2canvas from 'html2canvas';
 import { saveSvgAsPng } from 'save-svg-as-png';
-import { Angular2Csv } from 'angular2-csv';
+
+import { CsvComponent } from './csv.component';
 
 import { Answer } from 'app/entry/entry-content/questions/answer.model';
 import { Measure } from 'app/entry/entry-content/measures/measure.model';
@@ -16,7 +17,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { ModalsService } from '../modals/modals.service';
 import { PiaService } from 'app/entry/pia.service';
 import { AttachmentsService } from 'app/entry/attachments/attachments.service';
-
 import { LanguagesService } from '../services/languages.service';
 
 @Component({
@@ -29,6 +29,19 @@ import { LanguagesService } from '../services/languages.service';
   providers: [PiaService]
 })
 export class SummaryComponent implements OnInit {
+  csv = {
+    filename: "",
+    data: [],
+    options: {
+      fieldSeparator: ';',
+      quoteStrings: '"',
+      decimalseparator: 'locale',
+      showLabels: true,
+      showTitle: false,
+      useBom: true,
+      headers: []
+    }
+  };
 
   content: any[];
   pia: any;
@@ -79,13 +92,39 @@ export class SummaryComponent implements OnInit {
     });
   }
 
+  ngAfterContentChecked() {
+    this.csv.filename = this._translateService.instant('summary.csv_file_title');
+
+    this._actionPlanService.getCsv();
+    this.csv.data = this._actionPlanService.csvRows;
+
+    this.csv.options.headers = [
+      this._translateService.instant('summary.csv_section'),
+      this._translateService.instant('summary.csv_title_object'),
+      this._translateService.instant('summary.csv_action_plan_comment'),
+      this._translateService.instant('summary.csv_evaluation_comment'),
+      this._translateService.instant('summary.csv_implement_date'),
+      this._translateService.instant('summary.csv_people_in_charge'),
+    ];
+  }
+
+  /**
+   * Download all graphs as images
+   * @private
+   * @memberof SummaryComponent
+   */
   downloadAllGraphsAsImages() {
     this.getActionPlanOverviewImg();
     this.getRisksOverviewImg();
     this.getRisksCartographyImg();
   }
 
-  getActionPlanOverviewImg() {
+  /**
+   * Download the action plan overview as an image
+   * @private
+   * @memberof SummaryComponent
+   */
+  private getActionPlanOverviewImg() {
     setTimeout(() => {
       const actionPlanOverviewImg = document.querySelector('#actionPlanOverviewImg');
       if (actionPlanOverviewImg) {
@@ -99,7 +138,12 @@ export class SummaryComponent implements OnInit {
     }, 500);
   }
 
-  getRisksOverviewImg() {
+  /**
+   * Download the risks overview as an image
+   * @private
+   * @memberof SummaryComponent
+   */
+  private getRisksOverviewImg() {
     setTimeout(() => {
         const mysvg = document.getElementById('risksOverviewSvg');
         if (mysvg) {
@@ -112,7 +156,12 @@ export class SummaryComponent implements OnInit {
     }, 500);
   }
 
-  getRisksCartographyImg() {
+  /**
+   * Download the risks cartography as an image
+   * @private
+   * @memberof SummaryComponent
+   */
+  private getRisksCartographyImg() {
     setTimeout(() => {
       const risksCartographyImg = document.querySelector('#risksCartographyImg');
       if (risksCartographyImg) {
@@ -126,7 +175,14 @@ export class SummaryComponent implements OnInit {
     }, 500);
   }
 
-  downloadURI(uri, name) {
+  /**
+   * Generate a link to download the different images in the summary
+   * @private
+   * @param {uri} uri identifiant URI de l'image
+   * @param {string} name name of the image
+   * @memberof SummaryComponent
+   */
+  private downloadURI(uri, name) {
     const link = document.createElement('a');
     link.download = name;
     link.href = uri;
@@ -136,6 +192,7 @@ export class SummaryComponent implements OnInit {
 
   /**
    * Display or hide the main Pia data.
+   * @private
    * @memberof SummaryComponent
    */
   toggleMainContent() {
@@ -144,6 +201,7 @@ export class SummaryComponent implements OnInit {
 
   /**
    * Display or hide the main Pia data.
+   * @private
    * @memberof SummaryComponent
    */
   toggleContextContent() {
@@ -155,6 +213,7 @@ export class SummaryComponent implements OnInit {
 
   /**
    * Display or hide the main Pia data.
+   * @private
    * @memberof SummaryComponent
    */
   toggleFundamentalPrinciplesContent() {
@@ -166,6 +225,7 @@ export class SummaryComponent implements OnInit {
 
   /**
    * Display or hide the main Pia data.
+   * @private
    * @memberof SummaryComponent
    */
   toggleRisksContent() {
@@ -177,6 +237,7 @@ export class SummaryComponent implements OnInit {
 
   /**
    * Display or hide the action plan.
+   * @private
    * @memberof SummaryComponent
    */
   toggleActionPlanContent() {
@@ -185,6 +246,7 @@ export class SummaryComponent implements OnInit {
 
   /**
    * Display or hide the risks overview for the current PIA.
+   * @private
    * @memberof SummaryComponent
    */
   toggleRisksOverviewContent() {
@@ -193,6 +255,7 @@ export class SummaryComponent implements OnInit {
 
   /**
    * Display or hide the risks cartography for the current PIA.
+   * @private
    * @memberof SummaryComponent
    */
   toggleRisksCartographyContent() {
@@ -226,43 +289,13 @@ export class SummaryComponent implements OnInit {
 
   /**
    * Prepare and display the ActionPlan information.
+   * @private
    * @memberof SummaryComponent
    */
-  showActionPlan() {
+  private showActionPlan() {
     this._actionPlanService.data = this.dataNav;
     this._actionPlanService.pia = this.pia;
     this._actionPlanService.listActionPlan();
-  }
-
-  /**
-   * Get a csv document.
-   * @protected
-   * @returns {Object}
-   * @memberof Angular2Csv
-   */
-  public async download() {
-    const options = {
-      fieldSeparator: ';',
-      quoteStrings: '"',
-      decimalseparator: '.',
-      showLabels: true,
-      showTitle: false,
-      useBom: true,
-      headers: [
-        this._translateService.instant('summary.csv_section'),
-        this._translateService.instant('summary.csv_title_object'),
-        this._translateService.instant('summary.csv_action_plan_comment'),
-        this._translateService.instant('summary.csv_evaluation_comment'),
-        this._translateService.instant('summary.csv_implement_date'),
-        this._translateService.instant('summary.csv_people_in_charge')
-      ]
-    }
-
-    this._actionPlanService.getCsv();
-
-    return new Angular2Csv(this._actionPlanService.csvRows,
-                           this._translateService.instant('summary.csv_file_title'),
-                           options);
   }
 
   /**
@@ -481,6 +514,7 @@ export class SummaryComponent implements OnInit {
 
   /**
    * Select all text from page.
+   * @private
    * @memberof Angular2Csv
    */
   getTextSelection() {
